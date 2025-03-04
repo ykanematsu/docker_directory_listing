@@ -147,7 +147,8 @@ class DirectoryListing {
 	// Directories to block from showing in the directory listing
 	public $ignoredDirectories = array(
         '#recycle',
-        '@eaDir'
+        '@eaDir',
+        'Michelf',
 	);
 
 	// Files that begin with a dot are usually hidden files. Set this to false if you wish to show these hiden files.
@@ -924,7 +925,21 @@ function pr($data, $die = false) {
 	}
 }
 ?>
-<html>
+<?php
+// Read file and pass content through the Markdown parser
+use Michelf\Markdown;
+if (is_dir('Michelf')){
+    require_once 'Michelf/MarkdownInterface.php';
+    require_once 'Michelf/Markdown.php';
+    $readme = isset($_GET['dir'])? $_GET['dir'] : '';
+    $readme .= 'README.md';
+    if (file_exists($readme)) {
+        $text = file_get_contents($readme);
+        $readme_html = Markdown::defaultTransform($text);
+    }
+}
+?>
+<html lang="ja">
 <head>
 	<title>Directory Listing of <?php echo $data['currentPath'] . (!empty($listing->pageTitle) ? ' (' . $listing->pageTitle . ')' : null); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -997,8 +1012,11 @@ function pr($data, $die = false) {
 					</div>
 				</div>
 			<?php endif; ?>
-
-
+            <?php if (isset($readme_html)): ?>
+                <div style="font-size:14px;">
+                <?php echo $readme_html; ?>
+                </div>
+            <?php endif; ?>
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="table-container">
