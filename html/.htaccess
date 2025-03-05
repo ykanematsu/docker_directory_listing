@@ -1,5 +1,4 @@
 RewriteEngine on
 RewriteBase /
-RewriteCond %{REQUEST_FILENAME} !.*.php$
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.+)$ index.php?dir=$1 [QSA,END]
+RewriteRule (.+) index.php?dir=$1 [B,QSA,L]
