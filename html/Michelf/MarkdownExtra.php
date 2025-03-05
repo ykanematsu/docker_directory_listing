@@ -229,7 +229,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 		}
 
 		// Split on components
-		preg_match_all('/[#.a-z][-_:a-zA-Z0-9=]+/', $attr, $matches);
+		preg_match_all('/[#.a-z][-_:a-zA-Z0-9=]+/', $attr ?? "", $matches);
 		$elements = $matches[0];
 
 		// Handle classes and IDs (only first ID taken into account)
@@ -797,6 +797,16 @@ class MarkdownExtra extends \Michelf\Markdown {
 			return $text;
 		}
 		$this->in_anchor = true;
+
+        // pukiwiki link format
+		$text = preg_replace_callback('{
+			(					# wrap whole match in $1
+			  \[\[
+				((([^\[\]]+)))		# link text = url = $2 = $3 = $4; can\'t contain [ or ]
+			  \]\]
+			)
+			}xs',
+			array($this, '_doAnchors_inline_callback'), $text);
 
 		// First, handle reference-style links: [link text] [id]
 		$text = preg_replace_callback('{

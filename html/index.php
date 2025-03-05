@@ -927,15 +927,16 @@ function pr($data, $die = false) {
 ?>
 <?php
 // Read file and pass content through the Markdown parser
-use Michelf\Markdown;
+use Michelf\MarkdownExtra;
 if (is_dir('Michelf')){
     require_once 'Michelf/MarkdownInterface.php';
     require_once 'Michelf/Markdown.php';
+    require_once 'Michelf/MarkdownExtra.php';
     $readme = isset($_GET['dir'])? $_GET['dir'] : '';
     $readme .= 'README.md';
     if (file_exists($readme)) {
         $text = file_get_contents($readme);
-        $readme_html = Markdown::defaultTransform($text);
+        $readme_html = MarkdownExtra::defaultTransform($text);
     }
 }
 ?>
