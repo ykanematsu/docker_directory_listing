@@ -148,7 +148,7 @@ class DirectoryListing {
 	public $ignoredDirectories = array(
         '#recycle',
         '@eaDir',
-        'Michelf',
+        'module',
 	);
 
 	// Files that begin with a dot are usually hidden files. Set this to false if you wish to show these hiden files.
@@ -927,16 +927,15 @@ function pr($data, $die = false) {
 ?>
 <?php
 // Read file and pass content through the Markdown parser
-use Michelf\MarkdownExtra;
-if (is_dir('Michelf')){
-    require_once 'Michelf/MarkdownInterface.php';
-    require_once 'Michelf/Markdown.php';
-    require_once 'Michelf/MarkdownExtra.php';
+if (is_dir('module')){
+    require_once 'module/Parsedown.php';
+    require_once 'module/ParsedownExtra.php';
     $readme = isset($_GET['dir'])? $_GET['dir'] : '';
     $readme .= 'README.md';
     if (file_exists($readme)) {
+        $Parsedown = new ParsedownExtra();
         $text = file_get_contents($readme);
-        $readme_html = MarkdownExtra::defaultTransform($text);
+        $readme_html = $Parsedown->text($text);
     }
 }
 ?>
