@@ -783,7 +783,9 @@ class DirectoryListing {
 		$dirString = $this->__currentDirectory;
 		$directoryTree = array();
 
+        if(! isset($_GET['noindex'])) {
 		$directoryTree['./'] = 'Index';
+        }
 
 		if (substr_count($dirString, '/') >= 0) {
 			$items = explode("/", $dirString);
@@ -864,8 +866,9 @@ class DirectoryListing {
 		$pow = min($pow, count($units) - 1);
 
 		$bytes /= pow(1024, $pow);
+        $digits = $bytes < 10 ? 1 : 0;
 
-		return round($bytes, 2) . ' ' . $units[$pow];
+		return round($bytes, $digits) . ' ' . $units[$pow];
 	}
 
 }
@@ -948,17 +951,6 @@ if (is_dir('module')){
     <?php if($listing->enableTheme): ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 	<?php endif; ?>
-	<style>
-    .breadcrumb{padding:8px 15px;margin-bottom:20px;list-style:none;background-color:#f5f5f5;border-radius:4px}
-    a{text-decoration:none}
-	a.item{display:flex;position:relative;align-items: center;}
-    .item::before { content:"";padding: 0;width:32px;height:32px;margin-right:5px;background-size:32px 32px}
-    .initsort:hover::after{padding-left:2px;content: "\2191";}
-    .sort_asc::after{padding-left:2px;content: "\2193";}
-    .sort_asc:hover::after{padding-left:2px;content: "\2191";}
-    .sort_desc::after{padding-left:2px;content: "\2191";}
-    .sort_desc:hover::after{padding-left:2px;content: "\2193";}
-	</style>
 </head>
 <body>
 	<div class="container-fluid">
@@ -1169,6 +1161,15 @@ if (is_dir('module')){
 		</div>
 	</div>
 	<style>
+        .breadcrumb{padding:8px 15px;margin-bottom:20px;list-style:none;background-color:#f5f5f5;border-radius:4px}
+        a{text-decoration:none}
+	    a.item{display:flex;position:relative;align-items: center;}
+        .item::before { content:"";padding: 0;width:32px;height:32px;margin-right:5px;background-size:32px 32px}
+        .initsort:hover::after{padding-left:2px;content: "\2191";}
+        .sort_asc::after{padding-left:2px;content: "\2193";}
+        .sort_asc:hover::after{padding-left:2px;content: "\2191";}
+        .sort_desc::after{padding-left:2px;content: "\2191";}
+        .sort_desc:hover::after{padding-left:2px;content: "\2193";}
 		._blank::before { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAWBJREFUeNpi/P//PwMyKJ68eL+ytLgDA4ng/eevDO8+fVnQlxeXiE8dun1gAWRcNGnR/v9kgJ0nL/7vXLzhP1D/fEIOQMZMDFQEarKSDBqyEgmEHIEMqOoAIT4eBl1lOZIcQVUH8HBxMogJCZDkCKo6gIOdlUGAl5skR1DVASzMzAxcHGwkOYKJmJRKLGZiZGRgZWEhyREs1AyBMzfuMdx9+pLhH9Axf//9Y/j9+w/D95+/GP4zMDJwc7CDHAFSlkjQAf/JsNxGX4Ph2Zv3eNVsOnwmgTgH/CfdCRxsrAxKUmJ41XCys9E2EZKVcKkVAsSA/0Q7gFbexeIxuobA0IkCYBYe4BCgVSr4T2wI/P1HI/uJTIT/hm0iJDYK/tIsFf4fWAcQHQL//v0f2ET4h1ZRQHQa+Pt3YEPg798BTgN/aOYAYtMAraKA+BAYtmmASAfsOn2JJg54/+krhhhAgAEAOOceVk7I96wAAAAASUVORK5CYII=) }
 		._page::before { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA9JJREFUeNrElktoE1EUhv87j2QmD5uaVPsyrbXaGsXHQlBKoSKC6EZcVMFNi1IURBHBlYsorhQUXOnCF4puFNpNQRFSBR/gA7uxxSIt2oei1bZW7SPNeGfunckkpElGoh56embu3Nx8c/5zzw3RNA12Iyc7Yk3VoSY4tIGxn7pfQ3Rna7Z56d9nDNgd0faY9gcW7erVVl56qtHPX80FYHcBBbRttRXYsbquJReE3aRsD0nHePJmdATwBwCXag01hUTEGnzWfZVPwtrSSkiEtHRE25FLDt2yZ0AmQN8L4NUDoPMKMNzHxkyXSDK11Es8AuoCLjRHKrFrTX1emcgIoHEnsxPAIP3S/jeAxw+87AL50APiJobrAOZc3YrcAsp9IpYXyQZE87rcEFklqA4G0D89DbE4BH9lGK6aOngXl1rPS10khdotEhQrAgQ6rPvuyBKIVI7bWeSQMlcqixH6RsWbt0D1euELFONpLIYN4fKk5lQG+66SaD5VmhUCBiHSf3tW6RBouTkPhDSfBLrVU4D6+lprfLK2BkO9vdiyNmLch2XBmqvH690f0DUwigSliieAqTkNkzMapmfmUFHkaxmKto/RaUdzAiQSbNmwkkzx6+FR9H/9geHx73g9+BBlRX4cb1xJ58rG80MblqL708S8cratL8PWG4/X5ZWBBI8vB7/g+cg39Hy2Laz6jTAyA9x79xEHIwHjfoEio7Eq6Lh3ZK2Bge+/UOJTDM9ktUEV6Z21IABzfNHO7ctyLjD3NwH+hWUG4EV45s592vFokUluFkX9Wo/0Y4JIo8gioftPoE4IuwYx/szYsNhL3eM8A4/evqfdRWUuUwiXm8FINhATRgcwYAhzG0SFR8bGRQ4A4pzg7vF9BUt1fB5dMwLM8rnPet6lptpIs5CMREi+sfXWtvbMryu9suH5A3Da5rP0BPTQ41b1Agp1N02jS2FS6JJkqol0MGpHIiEcXhVyAsBi78XTBZPAXDM/AL4LXrzlEghiWqEJ7LgjGSrfkoBYoVyVUe5xIME0l6D1/GXWenUZFI9NAoVJYO0GOasEbXVBtK0I5g8wwzPw5ELhJDDXzAtgKv6fO+EUl2D7sRN8F/jYLlBU9qPUksCVuSGZEvCtuLdmoeGOAU4d2J/aA1L2f1oPMPuAVX/JfrBIkaw18wL4GWe/CGrCSwqWanNNRwDnrl5jle82K5+nXrZVv5X6tPTbzoNNJT7qXicALF1V1ctSt1tK15N4PxBTT0Ir/cRSwUNlNNfMC2CST27c1FAwCSadAEzMav93G9563v3PAH4LMACMNVxnrM+YQAAAAABJRU5ErkJggg==) }
 		.aac::before { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABMhJREFUeNq8V11Mm1UYftp+/aU/tKy/o2MbLaz8jAkscVkUNMYLTUycemVMZrLojV5464WJ8UqjMc4lJsaoNy7b4p2Ziz/LyIT5E3RAu4nrCkQKg1LY+t9+La3vOYRCoaU/Gk9yaL/3e885T5/3fZ/3ICkUCtg+egfPXevptg2jzhFaiSMUin/p+/31l/fy23meUM7pnbefrPd8XLw0ias/+E73DHyMaiC2D2kFnHVP9vf4YCs87RoG4otaAZRloJBH/YMQuD0OuF0tEK75TwO1MVEWwHq+fgQstlZ7Myz71JArZEiL0zWBqMBAoSEAmiYFHAdMkAlSAiHg0te3qoIoCyDfIAMSqYSDsLcaIQgyvCgXcOGid08Q5UOw3gAAYk3CsloigVotp3AYOBMvUTi+Oj9ZEUR5BtbrD0GeGLjy7TRu3lwsMpLLriMRz8Bi0WFmLsqq4wG9eqMqgFwNDIRXYojHMjh4eB9mA2Fo5FLIyG7UyiGXy7YcrVqgvQUnHj6Id9+/fuw/CcGfvgX8MhpA30AbnG0mypkCWlo0CC3HEZy9j75+B6w2XeM6wKirNEZ+vA3fVBAqlZLHnfkyJgL+MPY7myGhHJiauIcTJxXkIzQIIFfKwPivAcSiKcwFVhCJpKGiJNvUC+ZrNGn44YmECJlUCq1Wgbv+VRzxmBsFUMrA+M93sbjwgEpMSYcrt5VrgfvGYmksL0Vhs+spDAk4DzRjbS21a5+aAWR3hKBQoSjylCvMl8U7lcoiGsmgiX69hDpMJp3btU/DOVCogCCf3yq1lVAcOp2Kg2BlLJNJ9sylKgzkSp7NFj0EKq04HbSbgRzC4QQvPXYgw8pyoYkUcec+DTMw9EQX/2SxHh25Q3SLW0lIvpT4SCaYTQKLtYkApeF06v4FA2J55CqlgEcf78Bt7yJRnthggHxlFHOdnmJP14vQchKGZiXUKmnFfaoCEKss7Opx8KwXxTz3jVDc11bTvBFZrWqiX6i6R0MMbB8mqv1NX71ODmOzoq71VQCs19+M6l9SWxWYLVoolXIE5++X+Oj1KugNasqFGDKZnVVTfk1DOfDcCwO0mYBPP7lOsU4V7Y8MueFyW3Dlshc+70YLVpL2P3vqIVJCE39mwC6c/40SM1bfrVjMZvm0O/RchO78tYRD1FI37Wyyw6cm59HuMhdtni4bVYMK585exQfvfYelexGy2YvvawdAyNl0uSyYmw0jQE2ot7e1aG8/bEY6ncXYqB8dnTbISAiY3e22YuKPv3lYotS8Pv/sJ1z+ZrK4rnYAYpbPTo+d02+16qnRGLi6MXtHp5VrPzucDVeHhduZNLO7xOZ6Jseb39msGQArI7NZB6NRw8XGQLQy9es8YuPvPN37SfnoNtTWQl0vQW3Xzu3eqXn00yVFp1VCIHU688oQnnr6KH9XqTQrJmH/YBsWgmv46MPvue3U84MYPH6I6I3yS+dZsjNQR/ucOPPqML+A3qCQdHU78OZbz/A17P2NMf+eoiQp98/pyWNNw61OE5JJkRQuzu1qjQLMthqOQ0Pfg/NrxTVuCgV7TiU3egTzY/5+St7tY2wiMeIdf+2x6gyQDszMhEptESa5ybK/4pYvWPK8c23dOjA9K+L/Gv8IMAA+baRs/m86owAAAABJRU5ErkJggg==) }
