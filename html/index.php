@@ -1165,6 +1165,7 @@ if (is_dir('module')){
         a{text-decoration:none}
 	    a.item{display:flex;position:relative;align-items: center;}
         .item::before { content:"";padding: 0;width:32px;height:32px;margin-right:5px;background-size:32px 32px}
+        .initsort::after{margin-left:1px;content: "\3000";}
         .initsort:hover::after{padding-left:2px;content: "\2191";}
         .sort_asc::after{padding-left:2px;content: "\2193";}
         .sort_asc:hover::after{padding-left:2px;content: "\2191";}
