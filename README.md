@@ -5,5 +5,6 @@
   
 ## setup
 1. put index.php, .htaccess, and module directory into the directory to be mounted.
-2. fix volume and port in docker-compose.yml  
+2. fix volume and port in docker-compose.yml, if required.   
 3. run ```docker compose up```
+4. access http://localhost:8000
